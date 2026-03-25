@@ -1,0 +1,5 @@
+{
+  "name": "matran12",
+  "description": "Ứng dụng quản lý ma trận đề kiểm tra môn Toán lớp 12 với tính năng thêm, sửa, xóa và tính toán tỷ lệ tự động.",
+  "requestFramePermissions": []
+}
