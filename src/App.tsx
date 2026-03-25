@@ -4,14 +4,14 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  FileDown, 
-  RefreshCw, 
-  PlusCircle, 
-  Save, 
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  FileDown,
+  RefreshCw,
+  PlusCircle,
+  Save,
   X,
   ChevronDown,
   ChevronRight,
@@ -24,7 +24,7 @@ const INITIAL_DATA: MatrixData = {
   groups: []
 };
 
-const MATH_TEMPLATES: Record<string, {rec: string, und: string, app: string}> = {
+const MATH_TEMPLATES: Record<string, { rec: string, und: string, app: string }> = {
   "Sự đồng biến, nghịch biến của hàm số": {
     rec: "- Nhận biết được tính đơn điệu của hàm số thông qua bảng biến thiên hoặc đồ thị.\n- Nhận biết được mối liên hệ giữa tính đơn điệu và dấu của đạo hàm.",
     und: "- Xác định được các khoảng đơn điệu của hàm số cho bởi công thức hoặc đạo hàm.\n- Tìm tham số m để hàm số đơn điệu trên một khoảng.",
@@ -79,12 +79,12 @@ const MATH_TEMPLATES: Record<string, {rec: string, und: string, app: string}> = 
 
 export default function App() {
   const [data, setData] = useState<MatrixData>(INITIAL_DATA);
-  const [editingItem, setEditingItem] = useState<{groupId: string, item: MatrixItem} | null>(null);
+  const [editingItem, setEditingItem] = useState<{ groupId: string, item: MatrixItem } | null>(null);
   const [editingGroup, setEditingGroup] = useState<MatrixGroup | null>(null);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState<string | null>(null); // groupId
   const [activeTab, setActiveTab] = useState<'matrix' | 'spec'>('matrix');
-  const [editingRequirements, setEditingRequirements] = useState<{groupId: string, itemId: string, reqs: {rec: string, und: string, app: string}} | null>(null);
+  const [editingRequirements, setEditingRequirements] = useState<{ groupId: string, itemId: string, reqs: { rec: string, und: string, app: string } } | null>(null);
 
   // Calculations
   const totals = useMemo(() => {
@@ -109,7 +109,7 @@ export default function App() {
     });
 
     const totalQuestions = mc_rec + mc_und + mc_app + tf_rec + tf_und + tf_app + sa_und + sa_app + sa_adv;
-    
+
     return {
       mc_rec, mc_und, mc_app,
       tf_rec, tf_und, tf_app,
@@ -162,7 +162,7 @@ export default function App() {
 
   const handleAddItem = (groupId: string, name: string) => {
     // Find template match
-    const foundKey = Object.keys(MATH_TEMPLATES).find(k => 
+    const foundKey = Object.keys(MATH_TEMPLATES).find(k =>
       name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())
     );
     const match = foundKey ? MATH_TEMPLATES[foundKey] : null;
@@ -199,7 +199,7 @@ export default function App() {
     };
 
     const newData = { ...data };
-    
+
     // Distribute proportionally
     newData.groups = newData.groups.map(group => ({
       ...group,
@@ -224,18 +224,18 @@ export default function App() {
     const checkAndAdjust = (field: keyof MatrixItem, target: number) => {
       let currentTotal = 0;
       newData.groups.forEach(g => g.items.forEach(i => currentTotal += (i[field] as number)));
-      
+
       if (currentTotal !== target && newData.groups.length > 0) {
         // Find the item with most periods to adjust
-        let bestItem: {gIdx: number, iIdx: number, periods: number} | null = null;
+        let bestItem: { gIdx: number, iIdx: number, periods: number } | null = null;
         newData.groups.forEach((g, gIdx) => g.items.forEach((i, iIdx) => {
           if (!bestItem || i.periods > bestItem.periods) {
-            bestItem = {gIdx, iIdx, periods: i.periods};
+            bestItem = { gIdx, iIdx, periods: i.periods };
           }
         }));
 
         if (bestItem) {
-          const {gIdx, iIdx} = bestItem;
+          const { gIdx, iIdx } = bestItem;
           const val = newData.groups[gIdx].items[iIdx][field] as number;
           (newData.groups[gIdx].items[iIdx][field] as any) = val + (target - currentTotal);
         }
@@ -268,13 +268,13 @@ export default function App() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <button 
+            <button
               onClick={() => setActiveTab('matrix')}
               className={`px-6 py-2 rounded-lg font-bold transition-all shadow-sm flex items-center gap-2 ${activeTab === 'matrix' ? 'bg-[#0284c7] text-white' : 'bg-[#e2e8f0] text-[#64748b] hover:bg-[#cbd5e1]'}`}
             >
               1. Nhập liệu Ma Trận
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('spec')}
               className={`px-6 py-2 rounded-lg font-bold transition-all shadow-sm flex items-center gap-2 ${activeTab === 'spec' ? 'bg-[#10b981] text-white' : 'bg-[#e2e8f0] text-[#64748b] hover:bg-[#cbd5e1]'}`}
             >
@@ -283,13 +283,13 @@ export default function App() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
-            <button 
+            <button
               onClick={() => setIsAddingGroup(true)}
               className="flex items-center gap-2 px-4 py-2 bg-[#64748b] hover:bg-[#475569] text-white rounded-lg font-semibold text-sm transition-colors"
             >
               <PlusCircle size={18} /> Thêm Chương
             </button>
-            <button 
+            <button
               onClick={() => {
                 if (data.groups.length > 0) {
                   setIsAddingItem(data.groups[data.groups.length - 1].id);
@@ -302,7 +302,7 @@ export default function App() {
             >
               <Plus size={18} /> Thêm Bài Mới
             </button>
-            <button 
+            <button
               onClick={handleAutoDistribute}
               className="flex items-center gap-2 px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white rounded-lg font-semibold text-sm transition-colors"
             >
@@ -318,219 +318,219 @@ export default function App() {
         <div className="overflow-x-auto">
           {activeTab === 'matrix' ? (
             <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12 font-bold">STT</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16 font-bold uppercase">Số tiết</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px] font-bold uppercase text-[11px]">Nội dung kiến thức, đơn vị kiến thức</th>
-                <th colSpan={9} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 font-bold uppercase text-[11px]">Số câu hỏi theo mức độ nhận thức</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tổng số câu</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tỷ lệ (%)</th>
-              </tr>
-              <tr>
-                <th colSpan={3} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN</th>
-                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fefce8] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM ĐÚNG/SAI</th>
-                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fff1f2] p-2 font-bold uppercase text-[11px]">TRẢ LỜI NGẮN</th>
-              </tr>
-              <tr>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">VD,VDC</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.groups.length === 0 ? (
+              <thead>
                 <tr>
-                  <td colSpan={14} className="p-20 text-center text-[#94a3b8]">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="p-4 bg-[#f1f5f9] rounded-full text-[#cbd5e1]">
-                        <PlusCircle size={48} />
-                      </div>
-                      <p className="text-lg font-medium text-[#64748b]">Chưa có dữ liệu ma trận</p>
-                      <button 
-                        onClick={() => setIsAddingGroup(true)}
-                        className="px-6 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-lg font-semibold transition-colors shadow-sm"
-                      >
-                         Bắt đầu bằng cách thêm chương mới
-                      </button>
-                    </div>
-                  </td>
+                  <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12 font-bold">STT</th>
+                  <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16 font-bold uppercase">Số tiết</th>
+                  <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px] font-bold uppercase text-[11px]">Nội dung kiến thức, đơn vị kiến thức</th>
+                  <th colSpan={9} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 font-bold uppercase text-[11px]">Số câu hỏi theo mức độ nhận thức</th>
+                  <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tổng số câu</th>
+                  <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tỷ lệ (%)</th>
                 </tr>
-              ) : data.groups.map((group, gIdx) => (
-                <React.Fragment key={group.id}>
-                  {/* Group Header */}
-                  <tr className="bg-[#f8fafc] font-bold">
-                    <td className="border border-[#cbd5e1] p-2 text-center">{gIdx + 1}</td>
-                    <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
-                      {group.items.reduce((acc, i) => acc + i.periods, 0)}
-                    </td>
-                    <td className="border border-[#cbd5e1] p-2 text-left uppercase text-[#0369a1]">
-                      {group.name}
-                    </td>
-                    <td colSpan={9} className="border border-[#cbd5e1] p-2"></td>
-                    <td className="border border-[#cbd5e1] p-2 text-center">
-                      {group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0)}
-                    </td>
-                    <td className="border border-[#cbd5e1] p-2 text-center">
-                      {((group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0) / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
+                <tr>
+                  <th colSpan={3} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN</th>
+                  <th colSpan={3} className="border border-[#cbd5e1] bg-[#fefce8] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM ĐÚNG/SAI</th>
+                  <th colSpan={3} className="border border-[#cbd5e1] bg-[#fff1f2] p-2 font-bold uppercase text-[11px]">TRẢ LỜI NGẮN</th>
+                </tr>
+                <tr>
+                  <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">NB</th>
+                  <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">TH</th>
+                  <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">VD</th>
+                  <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">NB</th>
+                  <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">TH</th>
+                  <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">VD</th>
+                  <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">NB</th>
+                  <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">TH</th>
+                  <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">VD,VDC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.groups.length === 0 ? (
+                  <tr>
+                    <td colSpan={14} className="p-20 text-center text-[#94a3b8]">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="p-4 bg-[#f1f5f9] rounded-full text-[#cbd5e1]">
+                          <PlusCircle size={48} />
+                        </div>
+                        <p className="text-lg font-medium text-[#64748b]">Chưa có dữ liệu ma trận</p>
+                        <button
+                          onClick={() => setIsAddingGroup(true)}
+                          className="px-6 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-lg font-semibold transition-colors shadow-sm"
+                        >
+                          Bắt đầu bằng cách thêm chương mới
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                  {/* Items */}
-                  {group.items.map((item, iIdx) => {
-                    const itemTotal = item.mc_recognition + item.mc_understanding + item.mc_application + item.tf_recognition + item.tf_understanding + item.tf_application + item.sa_understanding + item.sa_application + item.sa_advanced;
-                    return (
-                      <tr key={item.id} className="hover:bg-[#f1f5f9] transition-colors">
-                        <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">{gIdx + 1}.{iIdx + 1}</td>
-                        <td className="border border-[#cbd5e1] p-1 bg-white">
-                          <input 
-                            type="number" 
-                            min="1"
-                            value={item.periods}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'periods', parseInt(e.target.value) || 1)}
-                            className="w-full bg-transparent text-center focus:outline-none font-medium"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-2 text-left pl-6 font-medium group relative">
-                          <div className="flex items-center justify-between">
-                            <span>{item.name}</span>
-                            <button 
-                              onClick={() => setEditingRequirements({
-                                groupId: group.id,
-                                itemId: item.id,
-                                reqs: {
-                                  rec: item.req_recognition,
-                                  und: item.req_understanding,
-                                  app: item.req_application
-                                }
-                              })}
-                              className="p-1 text-[#0284c7] hover:bg-[#e0f2fe] rounded"
-                              title="Chỉnh sửa đặc tả"
-                            >
-                              <FileText size={14} />
-                            </button>
-                          </div>
-                        </td>
-                        {/* MC */}
-                        <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.mc_recognition}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_recognition', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.mc_understanding}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_understanding', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.mc_application}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_application', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        {/* TF */}
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.tf_recognition}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_recognition', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.tf_understanding}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_understanding', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.tf_application}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_application', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        {/* SA */}
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.sa_understanding}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_understanding', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.sa_application}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_application', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
-                          <input 
-                            type="number" 
-                            min="0"
-                            value={item.sa_advanced}
-                            onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_advanced', parseInt(e.target.value) || 0)}
-                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
-                          />
-                        </td>
-                        <td className="border border-[#cbd5e1] p-2 text-center font-bold text-[#0369a1]">
-                          {itemTotal}
-                        </td>
-                        <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
-                          {((itemTotal / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="bg-[#f1f5f9] font-bold text-[#0f172a]">
-                <td className="border border-[#cbd5e1] p-2"></td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#e0f2fe]">{totals.totalPeriods}</td>
-                <td className="border border-[#cbd5e1] p-3 text-right uppercase">Tổng cộng</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_rec}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_und}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_app}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_rec}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_und}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_app}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_und}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_app}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_adv}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center text-[#0284c7] text-lg">{totals.totalQuestions}</td>
-                <td className="border border-[#cbd5e1] p-2 text-center">100%</td>
-              </tr>
-            </tfoot>
-          </table>
+                ) : data.groups.map((group, gIdx) => (
+                  <React.Fragment key={group.id}>
+                    {/* Group Header */}
+                    <tr className="bg-[#f8fafc] font-bold">
+                      <td className="border border-[#cbd5e1] p-2 text-center">{gIdx + 1}</td>
+                      <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
+                        {group.items.reduce((acc, i) => acc + i.periods, 0)}
+                      </td>
+                      <td className="border border-[#cbd5e1] p-2 text-left uppercase text-[#0369a1]">
+                        {group.name}
+                      </td>
+                      <td colSpan={9} className="border border-[#cbd5e1] p-2"></td>
+                      <td className="border border-[#cbd5e1] p-2 text-center">
+                        {group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0)}
+                      </td>
+                      <td className="border border-[#cbd5e1] p-2 text-center">
+                        {((group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0) / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
+                      </td>
+                    </tr>
+                    {/* Items */}
+                    {group.items.map((item, iIdx) => {
+                      const itemTotal = item.mc_recognition + item.mc_understanding + item.mc_application + item.tf_recognition + item.tf_understanding + item.tf_application + item.sa_understanding + item.sa_application + item.sa_advanced;
+                      return (
+                        <tr key={item.id} className="hover:bg-[#f1f5f9] transition-colors">
+                          <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">{gIdx + 1}.{iIdx + 1}</td>
+                          <td className="border border-[#cbd5e1] p-1 bg-white">
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.periods}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'periods', parseInt(e.target.value) || 1)}
+                              className="w-full bg-transparent text-center focus:outline-none font-medium"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-2 text-left pl-6 font-medium group relative">
+                            <div className="flex items-center justify-between">
+                              <span>{item.name}</span>
+                              <button
+                                onClick={() => setEditingRequirements({
+                                  groupId: group.id,
+                                  itemId: item.id,
+                                  reqs: {
+                                    rec: item.req_recognition,
+                                    und: item.req_understanding,
+                                    app: item.req_application
+                                  }
+                                })}
+                                className="p-1 text-[#0284c7] hover:bg-[#e0f2fe] rounded"
+                                title="Chỉnh sửa đặc tả"
+                              >
+                                <FileText size={14} />
+                              </button>
+                            </div>
+                          </td>
+                          {/* MC */}
+                          <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.mc_recognition}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_recognition', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.mc_understanding}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_understanding', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.mc_application}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_application', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          {/* TF */}
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.tf_recognition}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_recognition', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.tf_understanding}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_understanding', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fefce8]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.tf_application}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'tf_application', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          {/* SA */}
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.sa_understanding}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_understanding', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.sa_application}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_application', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-1 bg-[#fff1f2]">
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.sa_advanced}
+                              onChange={(e) => handleUpdateItem(group.id, item.id, 'sa_advanced', parseInt(e.target.value) || 0)}
+                              className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                            />
+                          </td>
+                          <td className="border border-[#cbd5e1] p-2 text-center font-bold text-[#0369a1]">
+                            {itemTotal}
+                          </td>
+                          <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
+                            {((itemTotal / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-[#f1f5f9] font-bold text-[#0f172a]">
+                  <td className="border border-[#cbd5e1] p-2"></td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#e0f2fe]">{totals.totalPeriods}</td>
+                  <td className="border border-[#cbd5e1] p-3 text-right uppercase">Tổng cộng</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_rec}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_und}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_app}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_rec}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_und}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_app}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_und}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_app}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_adv}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center text-[#0284c7] text-lg">{totals.totalQuestions}</td>
+                  <td className="border border-[#cbd5e1] p-2 text-center">100%</td>
+                </tr>
+              </tfoot>
+            </table>
           ) : (
             <table className="w-full border-collapse text-sm border border-gray-500">
               <thead className="bg-[#e0f2fe] text-center font-bold">
@@ -675,8 +675,8 @@ export default function App() {
       {/* Modals */}
       <AnimatePresence>
         {(isAddingGroup || editingGroup) && (
-          <Modal 
-            title={editingGroup ? "Sửa tên chương" : "Thêm chương mới"} 
+          <Modal
+            title={editingGroup ? "Sửa tên chương" : "Thêm chương mới"}
             onClose={() => { setIsAddingGroup(false); setEditingGroup(null); }}
           >
             <form onSubmit={(e) => {
@@ -694,7 +694,7 @@ export default function App() {
             }}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#64748b] mb-1">Tên chương</label>
-                <input 
+                <input
                   name="name"
                   defaultValue={editingGroup?.name || ''}
                   autoFocus
@@ -704,14 +704,14 @@ export default function App() {
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <button 
+                <button
                   type="button"
                   onClick={() => { setIsAddingGroup(false); setEditingGroup(null); }}
                   className="px-4 py-2 text-[#64748b] hover:bg-[#f1f5f9] rounded-lg font-semibold transition-colors"
                 >
                   Hủy
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-[#0284c7] text-white rounded-lg font-semibold hover:bg-[#0369a1] transition-colors"
                 >
@@ -723,8 +723,8 @@ export default function App() {
         )}
 
         {(isAddingItem || editingItem) && (
-          <Modal 
-            title={editingItem ? "Sửa tên mục" : "Thêm đơn vị kiến thức"} 
+          <Modal
+            title={editingItem ? "Sửa tên mục" : "Thêm đơn vị kiến thức"}
             onClose={() => { setIsAddingItem(null); setEditingItem(null); }}
           >
             <form onSubmit={(e) => {
@@ -732,7 +732,7 @@ export default function App() {
               const name = (e.currentTarget.elements.namedItem('name') as HTMLInputElement).value;
               if (editingItem) {
                 // Find template if it's a new name and requirements are empty
-                const foundKey = Object.keys(MATH_TEMPLATES).find(k => 
+                const foundKey = Object.keys(MATH_TEMPLATES).find(k =>
                   name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())
                 );
                 const match = foundKey ? MATH_TEMPLATES[foundKey] : null;
@@ -741,8 +741,8 @@ export default function App() {
                   ...prev,
                   groups: prev.groups.map(g => g.id === editingItem.groupId ? {
                     ...g,
-                    items: g.items.map(i => i.id === editingItem.item.id ? { 
-                      ...i, 
+                    items: g.items.map(i => i.id === editingItem.item.id ? {
+                      ...i,
                       name,
                       req_recognition: i.req_recognition || (match ? match.rec : ''),
                       req_understanding: i.req_understanding || (match ? match.und : ''),
@@ -757,7 +757,7 @@ export default function App() {
             }}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#64748b] mb-1">Tên đơn vị kiến thức</label>
-                <input 
+                <input
                   name="name"
                   defaultValue={editingItem?.item.name || ''}
                   autoFocus
@@ -767,14 +767,14 @@ export default function App() {
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <button 
+                <button
                   type="button"
                   onClick={() => { setIsAddingItem(null); setEditingItem(null); }}
                   className="px-4 py-2 text-[#64748b] hover:bg-[#f1f5f9] rounded-lg font-semibold transition-colors"
                 >
                   Hủy
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-[#0284c7] text-white rounded-lg font-semibold hover:bg-[#0369a1] transition-colors"
                 >
@@ -786,8 +786,8 @@ export default function App() {
         )}
 
         {editingRequirements && (
-          <Modal 
-            title="Sửa Đặc Tả (Yêu cầu cần đạt)" 
+          <Modal
+            title="Sửa Đặc Tả (Yêu cầu cần đạt)"
             onClose={() => setEditingRequirements(null)}
           >
             <form onSubmit={(e) => {
@@ -795,13 +795,13 @@ export default function App() {
               const rec = (e.currentTarget.elements.namedItem('req_recognition') as HTMLTextAreaElement).value;
               const und = (e.currentTarget.elements.namedItem('req_understanding') as HTMLTextAreaElement).value;
               const app = (e.currentTarget.elements.namedItem('req_application') as HTMLTextAreaElement).value;
-              
+
               setData(prev => ({
                 ...prev,
                 groups: prev.groups.map(g => g.id === editingRequirements.groupId ? {
                   ...g,
-                  items: g.items.map(i => i.id === editingRequirements.itemId ? { 
-                    ...i, 
+                  items: g.items.map(i => i.id === editingRequirements.itemId ? {
+                    ...i,
                     req_recognition: rec,
                     req_understanding: und,
                     req_application: app
@@ -814,13 +814,13 @@ export default function App() {
                 <span className="text-xs text-blue-700 font-medium italic">
                   Gợi ý: Nhấn "Tự động điền" để lấy mẫu dựa trên tên bài học.
                 </span>
-                <button 
+                <button
                   type="button"
                   onClick={() => {
                     // Try to match the item name
                     const itemName = data.groups.flatMap(g => g.items).find(i => i.id === editingRequirements.itemId)?.name || '';
                     let match = MATH_TEMPLATES[itemName];
-                    
+
                     if (!match) {
                       // Try fuzzy match
                       const foundKey = Object.keys(MATH_TEMPLATES).find(k => itemName.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(itemName.toLowerCase()));
@@ -846,7 +846,7 @@ export default function App() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-bold text-green-700 mb-1">Cấp độ: Nhận biết</label>
-                  <textarea 
+                  <textarea
                     name="req_recognition"
                     defaultValue={editingRequirements.reqs.rec}
                     className="w-full p-2 border border-[#cbd5e1] rounded-lg focus:ring-2 focus:ring-[#10b981] outline-none text-sm"
@@ -856,7 +856,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-yellow-700 mb-1">Cấp độ: Thông hiểu</label>
-                  <textarea 
+                  <textarea
                     name="req_understanding"
                     defaultValue={editingRequirements.reqs.und}
                     className="w-full p-2 border border-[#cbd5e1] rounded-lg focus:ring-2 focus:ring-[#f59e0b] outline-none text-sm"
@@ -866,7 +866,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-red-700 mb-1">Cấp độ: Vận dụng</label>
-                  <textarea 
+                  <textarea
                     name="req_application"
                     defaultValue={editingRequirements.reqs.app}
                     className="w-full p-2 border border-[#cbd5e1] rounded-lg focus:ring-2 focus:ring-[#ef4444] outline-none text-sm"
@@ -876,14 +876,14 @@ export default function App() {
                 </div>
               </div>
               <div className="flex justify-end gap-2 mt-6">
-                <button 
+                <button
                   type="button"
                   onClick={() => setEditingRequirements(null)}
                   className="px-4 py-2 text-[#64748b] hover:bg-[#f1f5f9] rounded-lg font-semibold transition-colors"
                 >
                   Hủy
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-[#0284c7] text-white rounded-lg font-semibold hover:bg-[#0369a1] transition-colors"
                 >
@@ -900,13 +900,13 @@ export default function App() {
 
 function Modal({ title, children, onClose }: { title: string, children: React.ReactNode, onClose: () => void }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
     >
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
